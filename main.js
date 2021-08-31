@@ -6,13 +6,58 @@ class Task{
         this.isFavorite = false;//bool
     }
 
-    setContents(contents){
-
+    setTaskName(taskName){
+        this.taskName = taskName;
     }
-}
-Vue.component("task", {
+    setContents(contents){
+        this.contens = contents;
+    }
+    changeFavorite(){
+        this.isFavorite = this.isFavorite === false;
+    }
 
-})
+    getSectionID(){
+        return this.sectionID;
+    }
+    getTaskName(){
+        return this.taskName;
+    }
+    getContents(){
+        return this.contens;
+    }
+    getIsFavorite(){
+        return this.isFavorite;
+    }
+
+}
+
+let sampleTask = new Task(1);
+sampleTask.setTaskName("sampleTask");
+sampleTask.setContents("これはさんぷるですよ")
+
+Vue.component("task-card", {
+    // props: ['sectionid'],
+
+    template: `
+    <v-app>
+        <v-main>
+            <v-container>
+                    <v-card
+                            elevation="1"
+                            tile
+                             max-width="374"
+                    >
+                        <v-card-title>Cafe Badilico</v-card-title>
+                        
+                        <v-card-text>
+                            dasfdasfdsafdsa
+                        </v-card-text>
+                    </v-card>
+            </v-container>
+        </v-main>
+    </v-app>`
+});
+
 
 class Section{
     constructor(sectionID, sectionName){
@@ -39,10 +84,10 @@ class SectionList{
     }
 }
 
-<!--    new Vue({-->
-<!--        el: '#app',-->
-<!--        vuetify: new Vuetify(),-->
-<!--    })-->
+new Vue({
+    el: '#app',
+    vuetify: new Vuetify()
+})
 // Vue.component('task', {
 //     props: ['sectionid'],
 //
