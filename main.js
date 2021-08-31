@@ -9,14 +9,10 @@ class Task{
     setContents(contents){
 
     }
-
-
-
-
 }
-// Vue.component("task", {
-//
-// })
+Vue.component("task", {
+
+})
 
 class Section{
     constructor(sectionID, sectionName){
@@ -43,6 +39,10 @@ class SectionList{
     }
 }
 
+<!--    new Vue({-->
+<!--        el: '#app',-->
+<!--        vuetify: new Vuetify(),-->
+<!--    })-->
 // Vue.component('task', {
 //     props: ['sectionid'],
 //

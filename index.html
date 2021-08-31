@@ -10,18 +10,25 @@
 <div id="app">
     <v-app>
         <v-main>
-            <v-container>Hello world</v-container>
+            <v-container>
+                <v-col cols = "2">
+                    <v-card
+                            elevation="1"
+                            tile
+                    >Hello world</v-card>
+                </v-col>
+            </v-container>
         </v-main>
     </v-app>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
-<!--<script>-->
-<!--    new Vue({-->
-<!--        el: '#app',-->
-<!--        vuetify: new Vuetify(),-->
-<!--    })-->
-<!--</script>-->
+<script>
+    new Vue({
+        el: '#app',
+        vuetify: new Vuetify(),
+    })
+</script>
 </body>
 </html>
