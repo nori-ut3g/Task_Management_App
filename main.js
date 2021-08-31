@@ -43,14 +43,14 @@ Vue.component("task-card", {
         <v-main>
             <v-container>
                     <v-card
-                            elevation="1"
+                            elevation="5"
                             tile
                              max-width="374"
                     >
-                        <v-card-title>Cafe Badilico</v-card-title>
+                        <v-card-title>Sample</v-card-title>
                         
                         <v-card-text>
-                            dasfdasfdsafdsa
+                            texttexttexttexttexttexttexttexttext
                         </v-card-text>
                     </v-card>
             </v-container>
