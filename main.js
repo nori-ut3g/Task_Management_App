@@ -71,6 +71,12 @@ class Section{
     }
 
 }
+Vue.component("task-section", {
+    // props: ['sectionid'],
+
+
+});
+
 
 class SectionList{
     constructor() {
