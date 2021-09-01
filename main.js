@@ -1,13 +1,12 @@
 class Task{
-    constructor(sectionID, taskNo) {
-        this.sectionID = sectionID;//int
+    constructor(sectionName, taskNo) {
+        this.sectionName = sectionName;//int
         this.taskName = taskNo//"";//string
         this.contents = "";//string
         this.isFavorite = false;//bool
         this.isComplete = false;
         this.UUID = uuidv4();
     }
-
     setTaskName(taskName){
         this.taskName = taskName;
     }
@@ -21,17 +20,20 @@ class Task{
         this.isComplete = this.isComplete === false;
     }
 
-    getSectionID(){
-        return this.sectionID;
+    getSectionName(){
+        return this.sectionName;
     }
     getTaskName(){
         return this.taskName;
     }
     getContents(){
-        return "sectionID:" + this.sectionID
-        return this.contents;
+        return "sectionName:" + this.sectionName
+        // return this.contents;
     }
 
+    setSectionName(sectionName){
+        this.sectionName = sectionName;
+    }
     getUUID(){
         return this.UUID;
     }
@@ -41,7 +43,7 @@ class Task{
 class Section{
     constructor(sectionName,sectionID){
         this.sectionID = sectionID;//int
-        this.sectionName = "sample section"//sectionName;//string
+        this.sectionName = "sample section"+sectionID//sectionName;//string
         this.taskNumber = 0;
         this.tasks = [];//[Task]
 
@@ -49,7 +51,7 @@ class Section{
     }
 
     createTask(){
-        this.tasks.push(new Task(this.sectionID, this.taskNumber));
+        this.tasks.push(new Task(this.sectionName, this.taskNumber));
         this.taskNumber++;
     }
 
@@ -70,6 +72,10 @@ class Section{
 
     deleteTask(targetTask){
         this.tasks = this.tasks.filter(task => task !== targetTask);
+    }
+
+    setAllTaskName(){
+        this.tasks.forEach(task => task.setSectionName(this.getSectionName()))
     }
 
 
@@ -171,7 +177,12 @@ let sectionComponent = {
         sectionName(){
             return this.taskSection.getSectionName();
         },
+        refreshSectionName(evt){
+            this.taskSection.setAllTaskName();
+        }
     },
+
+
 
     methods:{
         createTask(){
@@ -179,7 +190,11 @@ let sectionComponent = {
         },
         deleteTask(targetTask){
             this.taskSection.deleteTask(targetTask)
-        }
+        },
+        changeSection(targetTask){
+            targetTask.changeSection(this.taskSection);
+        },
+
     },
     components:{
         "task-card":taskCardComponent,
@@ -192,9 +207,9 @@ let sectionComponent = {
                     width="200"
                     class="my-2"
                     >{{sectionName}}</v-card>
-            <draggable :list="tasks" :options="{group:'group', animation: 150}">
-                <div v-for="(task, index) in tasks" :key="index">
-                    <task-card  :taskCard="task" @delete-btn-click="deleteTask" class="my-2"></task-card>
+            <draggable :list="tasks" group="task-app" animation="150" :="refreshSectionName">
+                <div v-for="(task, index) in tasks" :key="index" >
+                    <task-card  :taskCard="task" @delete-btn-click="deleteTask" class="my-2" ></task-card>
                 </div>
             </draggable>
                 <v-icon @click="createTask">mdi-plus</v-icon>
@@ -223,6 +238,9 @@ let taskManagementAppComponent = {
     methods:{
         createSection(){
             this.taskManagementApp.createSection();
+        },
+        test(){
+            console.log("yobareta")
         }
     },
     components:{
