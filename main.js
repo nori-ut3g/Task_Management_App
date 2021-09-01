@@ -1,7 +1,7 @@
 class Task{
-    constructor(sectionID) {
+    constructor(sectionID, taskNo) {
         this.sectionID = sectionID;//int
-        this.taskName = "";//string
+        this.taskName = taskNo//"";//string
         this.contents = "";//string
         this.isFavorite = false;//bool
         this.isComplete = false;
@@ -82,7 +82,7 @@ let taskCardComponent = {
             <v-card
                     elevation="3"
                     tile
-                     max-width="374"
+                    width="200"
             >
                 <v-card-title>{{taskName}}</v-card-title>
                 
@@ -99,7 +99,7 @@ let taskCardComponent = {
 
 let sectionComponent = {
     props:{
-        section: {
+        taskSection: {
             type: Object,
             default:() => {
                 let defaultSection = new Section(0,"sampleSection");
@@ -110,29 +110,70 @@ let sectionComponent = {
 
     computed:{
         tasks(){
-            return this.section.getTasksList();
+            console.log("fds")
+            return this.taskSection.getTasksList();
         }
     },
 
     methods:{
         createTask(){
-            this.section.createTask();
+            this.taskSection.createTask();
         },
         deleteTask(targetTask){
-            this.section.deleteTask(targetTask)
+            this.taskSection.deleteTask(targetTask)
         }
     },
     components:{
         "task-card":taskCardComponent
     },
     template: `
-    <v-app>
-        <v-main>
-            <v-container>
+            <div>
                 <div v-for="task in tasks">
                     <task-card  :taskCard="task" @delete-btn-click="deleteTask" class="my-2"></task-card>
                 </div>
                 <v-icon @click="createTask">mdi-plus</v-icon>
+            </div>`
+
+
+}
+
+
+let taskManagementAppComponent = {
+    props:{
+        taskManagementApp: {
+            type: Object,
+            default:() => {
+                return new TaskManagementApp();
+            },
+        }
+    },
+
+    computed:{
+        sections(){
+            return this.taskManagementApp.getSectionList();
+        }
+    },
+
+    methods:{
+        createSection(){
+            this.taskManagementApp.createSection();
+        }
+    },
+    components:{
+        "task-section":sectionComponent,
+    },
+    template: `
+    <v-app>
+        <v-main>
+            <v-container>
+            <v-row>
+                <div v-for="section in sections">
+                    <task-section :taskCard="section" class="mx-2"></task-section>
+                </div>            
+                <v-btn @click="createSection" class="my-2">add section</v-btn>
+            </v-row>
+
+                    
             </v-container>
         </v-main>
     </v-app>`
@@ -146,6 +187,7 @@ class Section{
         this.taskNumber = 0;
         this.tasks = [];//[Task]
 
+        this.createTask();
     }
 
     createTask(){
@@ -165,10 +207,7 @@ class Section{
     }
 
     deleteTask(targetTask){
-        console.log(targetTask.getUUID())
-        console.log(this.tasks[0].getUUID())
-
-        this.tasks = this.tasks.filter(task => task.getUUID() !== targetTask.getUUID());
+        this.tasks = this.tasks.filter(task => task !== targetTask);
     }
 
 
@@ -176,15 +215,20 @@ class Section{
 
 
 
-class SectionList{
+class TaskManagementApp{
     constructor() {
         this.numberingID = 0;
         this.sections = [];
     }
 
     createSection(sectionName){
-        this.numberingID++;
+
         this.sections.push(new Section(this.numberingID, sectionName));
+        this.numberingID++;
+    }
+
+    getSectionList(){
+        return this.sections;
     }
 }
 
@@ -194,7 +238,8 @@ new Vue({
     data: {
     },
     components:{
-        "task-section":sectionComponent
+
+        "task-management-app":taskManagementAppComponent
     }
 })
 
