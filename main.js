@@ -5,6 +5,8 @@ class Task{
         this.contents = "";//string
         this.isFavorite = false;//bool
         this.isComplete = false;
+        this.UUID = uuidv4();
+        console.log(this.UUID)
     }
 
     setTaskName(taskName){
@@ -29,6 +31,11 @@ class Task{
     getContents(){
         return this.contents;
     }
+
+    getUUID(){
+        return this.UUID;
+    }
+
 
 }
 
@@ -65,12 +72,15 @@ let taskCardComponent = {
         },
         switchComplete(){
             this.taskCard.switchComplete();
+        },
+        deleteTask(){
+            this.$emit("delete-btn-click", this.taskCard)
         }
     },
     template: `
 
             <v-card
-                    elevation="5"
+                    elevation="3"
                     tile
                      max-width="374"
             >
@@ -81,7 +91,7 @@ let taskCardComponent = {
                 </v-card-text>
                 <v-icon @click="switchComplete"> mdi-check-bold</v-icon>
                 <v-icon @click="switchFavorite" :color="favoriteStarColor"> mdi-star</v-icon>
-                <v-icon> mdi-delete</v-icon>
+                <v-icon @click="deleteTask"> mdi-delete</v-icon>
                 
             </v-card>`
 
@@ -103,16 +113,26 @@ let sectionComponent = {
             return this.section.getTasksList();
         }
     },
+
+    methods:{
+        createTask(){
+            this.section.createTask();
+        },
+        deleteTask(targetTask){
+            this.section.deleteTask(targetTask)
+        }
+    },
     components:{
-        "task-card":taskCardComponent,
+        "task-card":taskCardComponent
     },
     template: `
     <v-app>
         <v-main>
             <v-container>
                 <div v-for="task in tasks">
-                    <task-card  :task="task"></task-card>
+                    <task-card  :taskCard="task" @delete-btn-click="deleteTask" class="my-2"></task-card>
                 </div>
+                <v-icon @click="createTask">mdi-plus</v-icon>
             </v-container>
         </v-main>
     </v-app>`
@@ -123,20 +143,34 @@ class Section{
     constructor(sectionID, sectionName){
         this.sectionID = sectionID;//int
         this.sectionName = sectionName;//string
+        this.taskNumber = 0;
         this.tasks = [];//[Task]
 
-        this.createTask();
-        this.createTask();
-        this.createTask();
     }
 
     createTask(){
-        this.tasks.push(new Task(this.sectionID));
+        this.tasks.push(new Task(this.sectionID, this.taskNumber));
+        this.taskNumber++;
     }
 
     getTasksList(){
         return this.tasks;
     }
+
+    getAllTasksList(){
+
+    }
+    getActiveTasksList(){
+
+    }
+
+    deleteTask(targetTask){
+        console.log(targetTask.getUUID())
+        console.log(this.tasks[0].getUUID())
+
+        this.tasks = this.tasks.filter(task => task.getUUID() !== targetTask.getUUID());
+    }
+
 
 }
 
@@ -160,24 +194,7 @@ new Vue({
     data: {
     },
     components:{
-        "task-card":taskCardComponent,
         "task-section":sectionComponent
     }
 })
-// Vue.component('task', {
-//     props: ['sectionid'],
-//
-//     template: `
-//     <div class="card m-2" style="width: 18rem;">
-//         <div class="card-body">
-//         </div>
-//     </div>`
-// });
-// Vue.component('section', {
-//     props: ["itemcard"],
-//
-//     template: `
-//     <div class="card m-2" style="width: 18rem;">
-//
-//     </div>`
-// });
+
