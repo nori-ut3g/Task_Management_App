@@ -12,7 +12,7 @@ class Task{
     setContents(contents){
         this.contents = contents;
     }
-    changeFavorite(){
+    switchFavorite(){
         this.isFavorite = this.isFavorite === false;
     }
 
@@ -34,6 +34,60 @@ class Task{
 
 
 let taskCardComponent = {
+    props:{
+        taskCard: {
+            type: Object,
+            default:() => {
+                let defaultTask = new Task(0);
+                defaultTask.setTaskName("sampleTask");
+                defaultTask.setContents("texttexttext");
+                return defaultTask;
+            },
+        }
+    },
+
+    computed:{
+        taskName(){
+            return this.taskCard.getTaskName();
+        },
+        taskContents(){
+            return this.taskCard.getContents();
+        },
+        favoriteStarColor(){
+            return this.taskCard.isFavorite ? "yellow" : "";
+        }
+
+    },
+    methods:{
+        switchFavorite(){
+            this.taskCard.switchFavorite();
+        }
+    },
+    template: `
+    <v-app>
+        <v-main>
+            <v-container>
+                    <v-card
+                            elevation="5"
+                            tile
+                             max-width="374"
+                    >
+                        <v-card-title>{{taskName}}</v-card-title>
+                        
+                        <v-card-text>
+                            {{taskContents}}
+                        </v-card-text>
+                        <v-icon> mdi-check-bold</v-icon>
+                        <v-icon @click="switchFavorite" :color="favoriteStarColor"> mdi-star</v-icon>
+                        <v-icon> mdi-delete</v-icon>
+                        
+                    </v-card>
+            </v-container>
+        </v-main>
+    </v-app>`
+}
+
+let sectionComponent = {
     props:{
         taskCard: {
             type: Object,
@@ -74,7 +128,6 @@ let taskCardComponent = {
     </v-app>`
 }
 
-
 class Section{
     constructor(sectionID, sectionName){
         this.sectionID = sectionID;//int
@@ -87,11 +140,7 @@ class Section{
     }
 
 }
-Vue.component("task-section", {
-    // props: ['sectionid'],
 
-
-});
 
 
 class SectionList{
@@ -112,7 +161,8 @@ new Vue({
     data: {
     },
     components:{
-        "task-card-local":taskCardComponent
+        "task-card":taskCardComponent,
+        // "section":sectionComponent
     }
 })
 // Vue.component('task', {
