@@ -4,6 +4,7 @@ class Task{
         this.taskName = "";//string
         this.contents = "";//string
         this.isFavorite = false;//bool
+        this.isComplete = false;
     }
 
     setTaskName(taskName){
@@ -15,6 +16,9 @@ class Task{
     switchFavorite(){
         this.isFavorite = this.isFavorite === false;
     }
+    switchComplete(){
+        this.isComplete = this.isComplete === false;
+    }
 
     getSectionID(){
         return this.sectionID;
@@ -24,9 +28,6 @@ class Task{
     }
     getContents(){
         return this.contents;
-    }
-    getIsFavorite(){
-        return this.isFavorite;
     }
 
 }
@@ -61,71 +62,61 @@ let taskCardComponent = {
     methods:{
         switchFavorite(){
             this.taskCard.switchFavorite();
+        },
+        switchComplete(){
+            this.taskCard.switchComplete();
         }
     },
     template: `
-    <v-app>
-        <v-main>
-            <v-container>
-                    <v-card
-                            elevation="5"
-                            tile
-                             max-width="374"
-                    >
-                        <v-card-title>{{taskName}}</v-card-title>
-                        
-                        <v-card-text>
-                            {{taskContents}}
-                        </v-card-text>
-                        <v-icon> mdi-check-bold</v-icon>
-                        <v-icon @click="switchFavorite" :color="favoriteStarColor"> mdi-star</v-icon>
-                        <v-icon> mdi-delete</v-icon>
-                        
-                    </v-card>
-            </v-container>
-        </v-main>
-    </v-app>`
+
+            <v-card
+                    elevation="5"
+                    tile
+                     max-width="374"
+            >
+                <v-card-title>{{taskName}}</v-card-title>
+                
+                <v-card-text>
+                    {{taskContents}}
+                </v-card-text>
+                <v-icon @click="switchComplete"> mdi-check-bold</v-icon>
+                <v-icon @click="switchFavorite" :color="favoriteStarColor"> mdi-star</v-icon>
+                <v-icon> mdi-delete</v-icon>
+                
+            </v-card>`
+
 }
 
 let sectionComponent = {
     props:{
-        taskCard: {
+        section: {
             type: Object,
             default:() => {
-                let defaultTask = new Task(0);
-                defaultTask.setTaskName("sampleTask");
-                defaultTask.setContents("texttexttext");
-                return defaultTask;
+                let defaultSection = new Section(0,"sampleSection");
+                return defaultSection;
             },
         }
     },
 
     computed:{
-        taskName(){
-            return this.taskCard.getTaskName();
-        },
-        taskContents(){
-            return this.taskCard.getContents();
+        tasks(){
+            return this.section.getTasksList();
         }
+    },
+    components:{
+        "task-card":taskCardComponent,
     },
     template: `
     <v-app>
         <v-main>
             <v-container>
-                    <v-card
-                            elevation="5"
-                            tile
-                             max-width="374"
-                    >
-                        <v-card-title>{{taskName}}</v-card-title>
-                        
-                        <v-card-text>
-                            {{taskContents}}
-                        </v-card-text>
-                    </v-card>
+                <div v-for="task in tasks">
+                    <task-card  :task="task"></task-card>
+                </div>
             </v-container>
         </v-main>
     </v-app>`
+
 }
 
 class Section{
@@ -133,10 +124,18 @@ class Section{
         this.sectionID = sectionID;//int
         this.sectionName = sectionName;//string
         this.tasks = [];//[Task]
+
+        this.createTask();
+        this.createTask();
+        this.createTask();
     }
 
     createTask(){
         this.tasks.push(new Task(this.sectionID));
+    }
+
+    getTasksList(){
+        return this.tasks;
     }
 
 }
@@ -162,7 +161,7 @@ new Vue({
     },
     components:{
         "task-card":taskCardComponent,
-        // "section":sectionComponent
+        "task-section":sectionComponent
     }
 })
 // Vue.component('task', {
