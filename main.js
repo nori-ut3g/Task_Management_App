@@ -2,7 +2,7 @@ class Task{
     constructor(sectionID) {
         this.sectionID = sectionID;//int
         this.taskName = "";//string
-        this.contens = "";//string
+        this.contents = "";//string
         this.isFavorite = false;//bool
     }
 
@@ -10,7 +10,7 @@ class Task{
         this.taskName = taskName;
     }
     setContents(contents){
-        this.contens = contents;
+        this.contents = contents;
     }
     changeFavorite(){
         this.isFavorite = this.isFavorite === false;
@@ -23,7 +23,7 @@ class Task{
         return this.taskName;
     }
     getContents(){
-        return this.contens;
+        return this.contents;
     }
     getIsFavorite(){
         return this.isFavorite;
@@ -31,13 +31,29 @@ class Task{
 
 }
 
-let sampleTask = new Task(1);
-sampleTask.setTaskName("sampleTask");
-sampleTask.setContents("これはさんぷるですよ")
 
-Vue.component("task-card", {
-    // props: ['sectionid'],
 
+let taskCardComponent = {
+    props:{
+        taskCard: {
+            type: Object,
+            default:() => {
+                let defaultTask = new Task(0);
+                defaultTask.setTaskName("sampleTask");
+                defaultTask.setContents("texttexttext");
+                return defaultTask;
+            },
+        }
+    },
+
+    computed:{
+        taskName(){
+            return this.taskCard.getTaskName();
+        },
+        taskContents(){
+            return this.taskCard.getContents();
+        }
+    },
     template: `
     <v-app>
         <v-main>
@@ -47,16 +63,16 @@ Vue.component("task-card", {
                             tile
                              max-width="374"
                     >
-                        <v-card-title>Sample</v-card-title>
+                        <v-card-title>{{taskName}}</v-card-title>
                         
                         <v-card-text>
-                            texttexttexttexttexttexttexttexttext
+                            {{taskContents}}
                         </v-card-text>
                     </v-card>
             </v-container>
         </v-main>
     </v-app>`
-});
+}
 
 
 class Section{
@@ -92,7 +108,12 @@ class SectionList{
 
 new Vue({
     el: '#app',
-    vuetify: new Vuetify()
+    vuetify: new Vuetify(),
+    data: {
+    },
+    components:{
+        "task-card-local":taskCardComponent
+    }
 })
 // Vue.component('task', {
 //     props: ['sectionid'],
