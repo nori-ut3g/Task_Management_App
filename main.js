@@ -43,7 +43,7 @@ class Task{
 class Section{
     constructor(sectionName,sectionID){
         this.sectionID = sectionID;//int
-        this.sectionName = "sample section"+sectionID//sectionName;//string
+        this.sectionName = ""//sectionName;//string
         this.taskNumber = 0;
         this.tasks = [];//[Task]
 
@@ -67,7 +67,7 @@ class Section{
     }
 
     getSectionName(){
-        return this.sectionName + this.sectionID;
+        return this.sectionName;
     }
 
     deleteTask(targetTask){
@@ -140,7 +140,6 @@ let taskCardComponent = {
         }
     },
     template: `
-
             <v-card
                     elevation="3"
                     tile
@@ -169,6 +168,12 @@ let sectionComponent = {
             },
         }
     },
+    data:function(){
+        return{
+            isFocus:false
+        }
+
+    },
 
     computed:{
         tasks(){
@@ -177,9 +182,10 @@ let sectionComponent = {
         sectionName(){
             return this.taskSection.getSectionName();
         },
-        refreshSectionName(evt){
+        refreshSectionName(){
             this.taskSection.setAllTaskName();
         }
+
     },
 
 
@@ -191,9 +197,22 @@ let sectionComponent = {
         deleteTask(targetTask){
             this.taskSection.deleteTask(targetTask)
         },
-        changeSection(targetTask){
-            targetTask.changeSection(this.taskSection);
+        dbClick(){
+            this.isFocus = true;
         },
+        outFocus(){
+            this.isFocus = false;
+
+        },
+        changeSectionName(){
+
+        },
+        onEnter(event){
+            if (event.keyCode !== 13) return
+            this.isFocus = false;
+        }
+
+
 
     },
     components:{
@@ -201,12 +220,32 @@ let sectionComponent = {
     },
     template: `
             <div>
-            <v-card
-                    elevation="3"
-                    tile
-                    width="200"
-                    class="my-2"
-                    >{{sectionName}}</v-card>
+
+                    
+            <v-text-field 
+                ref="inputSectionName"
+                v-if="isFocus"
+                @blur="outFocus"
+                :value="sectionName"
+                elevation="3"
+                autofocus
+                @keydown.enter="onEnter"
+                width="200"
+                v-model="taskSection.sectionName"
+
+            ></v-text-field>
+            <v-card 
+                solo
+                v-else
+                v-on:dblclick="dbClick"
+                elevation="3"
+                tile
+                width="200"
+                height="25"
+                class="my-2"
+            >
+                {{sectionName}}
+            </v-card>
             <draggable :list="tasks" group="task-app" animation="150" :="refreshSectionName">
                 <div v-for="(task, index) in tasks" :key="index" >
                     <task-card  :taskCard="task" @delete-btn-click="deleteTask" class="my-2" ></task-card>
@@ -239,9 +278,6 @@ let taskManagementAppComponent = {
         createSection(){
             this.taskManagementApp.createSection();
         },
-        test(){
-            console.log("yobareta")
-        }
     },
     components:{
         "task-section":sectionComponent,
