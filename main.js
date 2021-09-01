@@ -1,7 +1,7 @@
 class Task{
     constructor(sectionName, taskNo) {
         this.sectionName = sectionName;//int
-        this.taskName = taskNo//"";//string
+        this.taskName = "";//string
         this.contents = "";//string
         this.isFavorite = false;//bool
         this.isComplete = false;
@@ -21,14 +21,13 @@ class Task{
     }
 
     getSectionName(){
-        return this.sectionName;
+        return "section: " + this.sectionName;
     }
     getTaskName(){
         return this.taskName;
     }
     getContents(){
-        return "sectionName:" + this.sectionName
-        // return this.contents;
+        return this.contents;
     }
 
     setSectionName(sectionName){
@@ -112,7 +111,13 @@ let taskCardComponent = {
             },
         }
     },
+    data:function(){
+        return{
+            isTaskNameFieldFocus:false,
+            isTaskContentsFieldFocus:false
+        }
 
+    },
     computed:{
         taskName(){
             return this.taskCard.getTaskName();
@@ -125,7 +130,11 @@ let taskCardComponent = {
         },
         uuid(){
             return this.taskCard.UUID;
+        },
+        sectionName(){
+            return this.taskCard.getSectionName();
         }
+
 
     },
     methods:{
@@ -137,24 +146,98 @@ let taskCardComponent = {
         },
         deleteTask(){
             this.$emit("delete-btn-click", this.taskCard)
-        }
+        },
+
+
+        taskNameFieldDbClick(){
+            this.isTaskNameFieldFocus = true
+        },
+        taskContentsFieldDbClick(){
+            this.isTaskContentsFieldFocus = true
+        },
+        taskNameFieldOutFocus(){
+            this.isTaskNameFieldFocus = false
+        },
+        taskContentsFieldOutFocus(){
+            console.log("rew")
+            this.isTaskContentsFieldFocus = false
+        },
+        taskNameFieldOnEnter(event){
+            if (event.keyCode !== 13) return
+            this.taskNameFieldOutFocus();
+
+        },
+        taskContentsFieldOnEnter(event){
+            if (event.keyCode !== 13) return
+            this.taskContentsFieldOutFocus();
+
+        },
     },
     template: `
+
+
+
             <v-card
                     elevation="3"
                     tile
                     width="200"
             >
-                <v-card-title>{{taskName}}</v-card-title>
+            <v-container>
+            <div>
+                <v-text-field 
+                v-if="isTaskNameFieldFocus"
+                    @blur="taskNameFieldOutFocus"
+                    :value="taskName"
+                    elevation="3"
+                    autofocus
+                    @keydown.enter="taskNameFieldOnEnter"
+                    width="180"
+                    v-model="taskCard.taskName"
+                ></v-text-field>
+                <v-card
+                v-else
+                    solo
+                    
+                    v-on:dblclick="taskNameFieldDbClick"
+                    tile
+                    width="180"
+                    height="30"
+                    class="my-2"
+                >
+                    <strong>{{taskName}}</strong>
                 
-                <v-card-text>
-                    {{taskContents}}
-                </v-card-text>
+                </v-card>     
+
+</div>
+<v-card-subtitle>{{sectionName}}</v-card-subtitle>
+
+                 <div>
+                <v-textarea 
+                outlined
+                    v-if="isTaskContentsFieldFocus"
+                    @blur="taskContentsFieldOutFocus"
+                    :value="taskContents"
+                    @keydown.enter="taskContentsFieldOnEnter"
+                    v-model="taskCard.contents"
+                ></v-textarea >
+                <v-card-text
+                    v-else
+                    v-on:dblclick="taskContentsFieldDbClick"
+                >
+                {{taskContents}}
+                </v-card-text>   
+                
+                </div>             
+                <v-icon @click="taskContentsFieldDbClick"> mdi-note </v-icon>
+                           
+                
                 <v-icon @click="switchComplete"> mdi-check-bold</v-icon>
                 <v-icon @click="switchFavorite" :color="favoriteStarColor"> mdi-star</v-icon>
                 <v-icon @click="deleteTask"> mdi-delete</v-icon>
+                </v-container>
+            </v-card>
                 
-            </v-card>`
+`
 
 }
 
@@ -204,9 +287,6 @@ let sectionComponent = {
             this.isFocus = false;
 
         },
-        changeSectionName(){
-
-        },
         onEnter(event){
             if (event.keyCode !== 13) return
             this.isFocus = false;
@@ -221,7 +301,7 @@ let sectionComponent = {
     template: `
             <div>
 
-                    
+              
             <v-text-field 
                 ref="inputSectionName"
                 v-if="isFocus"
@@ -285,21 +365,19 @@ let taskManagementAppComponent = {
     template: `
     <v-app>
         <v-main>
-            <v-container>
-            <v-row>
-                <div v-for="(section, index) in sections" :key="index">
-                    <task-section :taskSection="section" class="mx-2"></task-section>
-                </div>            
+            <div class="d-flex flex-row overflow-auto">
+                <draggable :list="sections" group="task-app-sections" animation="150" class="d-flex flex-row">
+                    <div v-for="(section, index) in sections" :key="index">
+                        <task-section :taskSection="section" class="mx-2 "></task-section>
+                    </div>        
+                </draggable>    
                 <v-btn @click="createSection" class="my-2">add section</v-btn>
-            </v-row>
-
-                    
-            </v-container>
+            </div>         
         </v-main>
     </v-app>`
 
 }
-
+Vue.use(window.VueTextareaAutosize);
 
 new Vue({
     el: '#app',
