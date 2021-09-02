@@ -17,7 +17,7 @@ class Task{
         this.sectionName = sectionName;
     }
     getSectionName(){
-        return "section: " + this.sectionName;
+        return this.sectionName;
     }
     getTaskName(){
         return this.taskName;
@@ -174,13 +174,13 @@ let taskCardComponent = {
                         v-on:dblclick="taskNameFieldDbClick"
                         tile
                         width="180"
-                        height="30"
+                        min-height="30"
                         class="my-2"
                     >
                         <strong>{{taskName}}</strong>
                     </v-card>     
                 </div>
-                <v-card-subtitle>{{sectionName}}</v-card-subtitle>
+                <v-card-subtitle>Section Name: {{sectionName}}</v-card-subtitle>
                 <div>
                     <v-textarea 
                         outlined
@@ -274,7 +274,7 @@ let sectionComponent = {
                 elevation="3"
                 tile
                 width="200"
-                height="25"
+                min-height="25"
                 class="my-2"
             >
                 {{sectionName}}
