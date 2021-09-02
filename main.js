@@ -195,11 +195,13 @@ let taskCardComponent = {
                         v-on:dblclick="taskContentsFieldDbClick"
                     >{{taskContents}}
                     </v-card-text>   
-                </div>             
-                <v-icon @click="taskContentsFieldDbClick"> mdi-note </v-icon>
-                <v-icon @click="switchComplete"> mdi-check-bold</v-icon>
-                <v-icon @click="switchFavorite" :color="favoriteStarColor"> mdi-star</v-icon>
-                <v-icon @click="deleteTask"> mdi-delete</v-icon>
+                </div>      
+                <div class="text-right">
+                    <v-icon @click="taskContentsFieldDbClick"> mdi-note </v-icon>
+                    <v-icon @click="switchComplete"> mdi-check-bold</v-icon>
+                    <v-icon @click="switchFavorite" :color="favoriteStarColor"> mdi-star</v-icon>
+                    <v-icon @click="deleteTask"> mdi-delete</v-icon>
+                </div>       
             </v-container>
         </v-card>`
 }
